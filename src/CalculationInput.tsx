@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Form, InputGroup, FormControl, Button } from "react-bootstrap";
 
-import { ws } from "@/App";
-import { ClientMessage } from "@/Websocket";
+import { ws } from "App";
+import { ClientMessage } from "Websocket";
 
 export default function CalculationInput(props: any) {
     const [calculation, setCalculation] = useState("");
@@ -12,7 +12,7 @@ export default function CalculationInput(props: any) {
         setError("")
 
         if (event && event.preventDefault) { event.preventDefault(); }
-        if (calculation) { ws.send(calculation); }
+        if (calculation) { ws.sendCalculation(calculation); }
 
         setCalculation("");
     }

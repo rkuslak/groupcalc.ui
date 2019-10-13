@@ -1,4 +1,5 @@
-const SOCKET_URL: string = process.env.NODE_ENV === "production" ? "ws://ronkuslak.com/ws_groupcalc/" : "ws://localhost/ws_groupcalc/";
+/* const SOCKET_URL: string = process.env.NODE_ENV === "production" ? "ws://ronkuslak.com/ws_groupcalc/" : "ws://localhost/ws_groupcalc/"; */
+const SOCKET_URL: string = "ws://" + window.location.hostname + "/ws_groupcalc/";
 
 export interface ClientMessage {
     type: string
@@ -6,7 +7,7 @@ export interface ClientMessage {
     calculations: string[] | null
 }
 
-type ClientMessageCallback = (msg: ClientMessage) => void;
+export type ClientMessageCallback = (msg: ClientMessage) => void;
 
 export default class WebsocketConection {
     socket: WebSocket;
@@ -42,14 +43,23 @@ export default class WebsocketConection {
         }
     }
 
+
     private messageHandler(msg: MessageEvent) {
         const data = JSON.parse(msg.data);
+
+        // Respond instantly to ping requests from the endpoint
+        if (data.type === "PING") {
+            const json = JSON.stringify({type: "PONG"})
+            this.socket.send(json);
+            return;
+        }
+
         this.lastMessage = data;
         this.lastResults = data.calculations || this.lastResults;
         this.updateCallback.forEach(callback => callback(data));
     }
 
-    public send(message: string) {
+    public sendCalculation(message: string) {
         const json = JSON.stringify({ type: "CALCULATION", message });
         this.socket.send(json);
     }

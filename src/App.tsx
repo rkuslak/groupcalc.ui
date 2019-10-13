@@ -1,10 +1,11 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import React, { useState, useEffect } from 'react';
 import { Navbar, Row, Col, Container, Table } from "react-bootstrap";
 
 import WebsocketConnection, { ClientMessage } from "Websocket";
 import CalculationInput from "CalculationInput";
 import 'App.css';
-
 
 export const ws: WebsocketConnection = new WebsocketConnection()
 

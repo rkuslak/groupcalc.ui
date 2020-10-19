@@ -2,10 +2,12 @@ PODNAME ?= test_site
 CONTAINER_NAME ?= index
 PUBLIC_URL ?= http://ronkuslak.com/groupcalc/
 INSTALL_DIR ?= $(realpath ../../)/public_html/groupcalc/
+PWD ?= $(shell pwd)
+DOCKER ?= docker
 
 build: .
-	podman run --rm \
-		-v ./:/workspace:Z \
+	${DOCKER} run --rm \
+		-v ${PWD}:/workspace:Z \
 		-e "PUBLIC_URL=${PUBLIC_URL}" \
 		-t node:14 \
 		sh -c "cd workspace && yarn install && yarn build"

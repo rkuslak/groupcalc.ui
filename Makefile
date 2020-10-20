@@ -1,9 +1,9 @@
-PODNAME ?= test_site
-CONTAINER_NAME ?= index
+PODNAME ?= website
+CONTAINER_NAME ?= groupcalc
 PUBLIC_URL ?= http://ronkuslak.com/groupcalc/
 INSTALL_DIR ?= $(realpath ../../)/public_html/groupcalc/
 PWD ?= $(shell pwd)
-DOCKER ?= docker
+DOCKER ?= podman
 
 build: .
 	${DOCKER} run --rm \
@@ -20,16 +20,17 @@ clean:
 	rm -rf build
 
 start:
-	podman pod exists ${PODNAME} || \
-		podman pod create -p 3001:3000 --name ${PODNAME}
-	podman container exists index || \
+	podman pod exists ${PODNAME}
+	podman container exists ${CONTAINER_NAME} || \
 		podman run --rm --pod ${PODNAME} --name ${CONTAINER_NAME} \
 			-v ./:/workspace:Z \
-			-t node:14 \
-			sh -c "cd workspace &&yarn start"
+			-t nodebuilder \
+			sh -c "cd workspace && yarn start"
 
 stop:
-	podman pod exists ${PODNAME} && podman pod rm -f ${PODNAME} || true
+	podman container exists ${CONTAINER_NAME} && \
+		podman container rm -f ${CONTAINER_NAME} || \
+		true
 
 shell:
 	podman exec -it ${CONTAINER_NAME} bash
